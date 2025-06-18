@@ -28,11 +28,12 @@ class GxEPD2_1160_GDEY116T91 : public GxEPD2_4G_EPD
     //static const bool hasFastPartialUpdate = false; // with grey refresh
     static const bool hasFastPartialUpdate = true; // with b/w refresh
     static const bool useFastFullUpdate = true; // set false for extended (low) temperature range
+    // FIXME: These times area pulled out of thin air!
     static const uint16_t power_on_time = 100; // ms, e.g. 81000us
     static const uint16_t power_off_time = 150; // ms, e.g. 140350us
-    static const uint16_t grey_refresh_time = 4000; // ms, e.g. 3943998us
-    static const uint16_t full_refresh_time = 1800; // ms, e.g. 1706000us
-    static const uint16_t partial_refresh_time = 510; // ms, e.g. 501000us
+    static const uint16_t grey_refresh_time = 7000; // ms, e.g. 3943998us
+    static const uint16_t full_refresh_time = 5000; // ms, e.g. 1706000us
+    static const uint16_t partial_refresh_time = 700; // ms, e.g. 501000us
     // constructor
     GxEPD2_1160_GDEY116T91(int16_t cs, int16_t dc, int16_t rst, int16_t busy);
     // methods (virtual)

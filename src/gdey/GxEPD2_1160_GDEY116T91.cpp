@@ -546,7 +546,7 @@ void GxEPD2_1160_GDEY116T91::hibernate()
   if (_rst >= 0)
   {
     _writeCommand(0x10); // deep sleep mode
-    _writeData(0x1);     // enter deep sleep
+    _writeData(0x03);
     _hibernating = true;
     _init_display_done = false;
     _init_4G_done = false;
@@ -557,27 +557,24 @@ void GxEPD2_1160_GDEY116T91::_setPartialRamArea(uint16_t x, uint16_t y, uint16_t
 {
   //Serial.print("_setPartialRamArea("); Serial.print(x); Serial.print(", "); Serial.print(y); Serial.print(", ");
   //Serial.print(w); Serial.print(", "); Serial.print(h); Serial.println(")");
-  // gates are reversed on this display, but controller has no gates reverse scan
-  // reverse data entry on y
-  y = HEIGHT - y - h; // reversed partial window
   _writeCommand(0x11); // set ram entry mode
-  _writeData(0x01);    // x increase, y decrease : y reversed
+  _writeData(0x03);    // Y increment, X increment
   _writeCommand(0x44);
   _writeData(x % 256);
   _writeData(x / 256);
   _writeData((x + w - 1) % 256);
   _writeData((x + w - 1) / 256);
   _writeCommand(0x45);
-  _writeData((y + h - 1) % 256);
-  _writeData((y + h - 1) / 256);
   _writeData(y % 256);
   _writeData(y / 256);
+  _writeData((y + h - 1) % 256);
+  _writeData((y + h - 1) / 256);
   _writeCommand(0x4e);
   _writeData(x % 256);
   _writeData(x / 256);
   _writeCommand(0x4f);
-  _writeData((y + h - 1) % 256);
-  _writeData((y + h - 1) / 256);
+  _writeData(y % 256);
+  _writeData(y / 256);
 }
 
 void GxEPD2_1160_GDEY116T91::_PowerOn()
@@ -620,7 +617,7 @@ void GxEPD2_1160_GDEY116T91::_InitDisplay()
   _writeCommand(0x01); // Driver output control
   _writeData((HEIGHT - 1) % 256); // gates A0..A7
   _writeData((HEIGHT - 1) / 256); // gates A8, A9
-  _writeData(0x02); // SM (interlaced) ??
+  _writeData(0x00); // non-interlaced scan mode (normal)
   _writeCommand(0x3C); // Border setting
   _writeData(0x01);
   _writeCommand(0x18); // use the internal temperature sensor
@@ -659,7 +656,7 @@ const unsigned char GxEPD2_1160_GDEY116T91::lut_4G[] PROGMEM =
   0x00, 0x00, 0x00, 0x00, 0x00, // TP 8 RP8
   0x00, 0x00, 0x00, 0x00, 0x01, // TP 9 RP9
   0x22, 0x22, 0x22, 0x22, 0x22, // frame rate @100
-  0x17, 0x41, 0xA8, 0x32, 0x30, // VGH, VSH1, VSH2, VSL, VCOM
+  0x17, 0x41, 0xA8, 0x32, 0x50, // VGH, VSH1, VSH2, VSL, VCOM
   0x00, 0x00, // Reserve 1, Reserve 2
 };
 
@@ -691,7 +688,7 @@ void GxEPD2_1160_GDEY116T91::_Init_4G()
   _writeCommand(0x01); // Driver output control
   _writeData((HEIGHT - 1) % 256); // gates A0..A7
   _writeData((HEIGHT - 1) / 256); // gates A8, A9
-  _writeData(0x02); // SM (interlaced) ??
+  _writeData(0x00); // non-interlaced scan mode (normal)
   _writeCommand(0x3C); // Border setting
   _writeData(0x00); // LUT0 (white)
   _writeCommand(0x18); // use the internal temperature sensor
@@ -726,7 +723,6 @@ void GxEPD2_1160_GDEY116T91::_Update_Full()
 {
   _writeCommand(0x21); // Display Update Controll
   _writeData(0x40);    // bypass RED as 0
-  _writeData(0x00);    // single chip application
   if (useFastFullUpdate)
   {
     _writeCommand(0x1A); // Write to temperature register
@@ -748,7 +744,6 @@ void GxEPD2_1160_GDEY116T91::_Update_4G()
 {
   _writeCommand(0x21); // Display Update Controll
   _writeData(0x00);    // RED normal (0x26)
-  _writeData(0x00);    // single chip application
   _writeCommand(0x22);
   _writeData(0xc7);
   _writeCommand(0x20);
@@ -760,7 +755,6 @@ void GxEPD2_1160_GDEY116T91::_Update_Part()
 {
   _writeCommand(0x21); // Display Update Controll
   _writeData(0x00);    // RED normal
-  _writeData(0x00);    // single chip application
   _writeCommand(0x22);
   _writeData(0xfc);
   _writeCommand(0x20);

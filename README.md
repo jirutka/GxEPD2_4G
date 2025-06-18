@@ -5,7 +5,7 @@
 
 - With full Graphics and Text support using Adafruit_GFX
 
-- For SPI e-paper displays from Dalian Good Display 
+- For SPI e-paper displays from Dalian Good Display
 - and SPI e-paper boards from Waveshare
 
 ### note on grey level support
@@ -65,7 +65,7 @@
 - GxEPD2_4G uses Adafruit_GFX for Graphics and Text support, which is well documented there
 - GxEPD2_4G uses meaningful method names, and has some comments in the header files
 - consult the header files GxEPD2_4G_BW.h, GxEPD2_4G_4G.h and GxEPD2_4G_GFX.h
-- for the concept of paged drawing and picture loop see: 
+- for the concept of paged drawing and picture loop see:
 - https://github.com/olikraus/u8glib/wiki/tpictureloop
 
 ### Note on issues and pull requests
@@ -91,6 +91,7 @@
 - GDEQ0426T82    4.26" b/w 800x480, SSD1677
 - GDEW075T7      7.5" b/w 800x480, EK79655 (GD7965)
 - GDEY075T7      7.5" b/w 800x480, UC8179
+- GDEY116T91     11.6" b/w 960x640, SSD1677
 
 ### Version 1.0.9
 - added support for ED037TC1 280x480
