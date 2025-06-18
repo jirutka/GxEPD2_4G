@@ -23,8 +23,8 @@ void GxEPD2_1160_GDEY116T91::clearScreen(uint8_t value)
 {
   // full refresh needed for all cases (previous != screen)
   if (!_init_display_done) _InitDisplay();
-  _writeScreenBuffer(0x26, value); // set previous
-  _writeScreenBuffer(0x24, value); // set current
+  _writeScreenBuffer(0x26, value); // set RAM #2 (prev)
+  _writeScreenBuffer(0x24, value); // set RAM #1 (current)
   refresh(false); // full refresh
   _initial_write = false;
 }
@@ -34,18 +34,18 @@ void GxEPD2_1160_GDEY116T91::writeScreenBuffer(uint8_t value)
   if (_initial_write) return clearScreen(value);
   if (!_init_display_done && !_init_4G_done) _InitDisplay();
   _setPartialRamArea(0, 0, WIDTH, HEIGHT);
-  if (_init_display_done) return _writeScreenBuffer(0x24, value); // set current
+  if (_init_display_done) return _writeScreenBuffer(0x24, value); // set RAM #1 (current)
   else // 4G
   {
-    _writeScreenBuffer(0x24, ~value); // set current
-    _writeScreenBuffer(0x26, ~value); // set previous
+    _writeScreenBuffer(0x24, ~value); // set RAM #1 (current)
+    _writeScreenBuffer(0x26, ~value); // set RAM #2 (prev)
   }
 }
 
 void GxEPD2_1160_GDEY116T91::writeScreenBufferAgain(uint8_t value)
 {
-  _writeScreenBuffer(0x24, value); // set current
-  _writeScreenBuffer(0x26, value); // set previous
+  _writeScreenBuffer(0x24, value); // set RAM #1 (current)
+  _writeScreenBuffer(0x26, value); // set RAM #2 (prev)
 }
 
 void GxEPD2_1160_GDEY116T91::_writeScreenBuffer(uint8_t command, uint8_t value)
@@ -79,15 +79,15 @@ void GxEPD2_1160_GDEY116T91::writeImage(const uint8_t bitmap[], int16_t x, int16
 
 void GxEPD2_1160_GDEY116T91::writeImageForFullRefresh(const uint8_t bitmap[], int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
 {
-  _writeImage(0x26, bitmap, x, y, w, h, invert, mirror_y, pgm); // set previous
-  _writeImage(0x24, bitmap, x, y, w, h, invert, mirror_y, pgm); // set current
+  _writeImage(0x26, bitmap, x, y, w, h, invert, mirror_y, pgm); // set RAM #2 (prev)
+  _writeImage(0x24, bitmap, x, y, w, h, invert, mirror_y, pgm); // set RAM #1 (current)
 }
 
 
 void GxEPD2_1160_GDEY116T91::writeImageAgain(const uint8_t bitmap[], int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
 {
-  _writeImage(0x26, bitmap, x, y, w, h, invert, mirror_y, pgm); // set previous
-  _writeImage(0x24, bitmap, x, y, w, h, invert, mirror_y, pgm); // set current
+  _writeImage(0x26, bitmap, x, y, w, h, invert, mirror_y, pgm); // set RAM #2 (prev)
+  _writeImage(0x24, bitmap, x, y, w, h, invert, mirror_y, pgm); // set RAM #1 (current)
 }
 
 void GxEPD2_1160_GDEY116T91::_writeImage(uint8_t command, const uint8_t bitmap[], int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
@@ -159,7 +159,7 @@ void GxEPD2_1160_GDEY116T91::writeImage_4G(const uint8_t bitmap[], uint8_t bpp, 
   if ((w1 <= 0) || (h1 <= 0)) return;
   if (!_init_4G_done) _Init_4G();
   _setPartialRamArea(x1, y1, w1, h1);
-  _writeCommand(0x26);
+  _writeCommand(0x26); // write to RAM #2 (previous)
   _startTransfer();
   for (uint16_t i = 0; i < h1; i++) // lines
   {
@@ -188,7 +188,7 @@ void GxEPD2_1160_GDEY116T91::writeImage_4G(const uint8_t bitmap[], uint8_t bpp, 
         {
           out_byte <<= 1;
           uint8_t nibble = in_byte & mask;
-          if (nibble == mask) out_byte |= 0x01;//white
+          if (nibble == mask) out_byte |= 0x01; //white
           else if (nibble == 0x00) out_byte |= 0x00;  //black
           else if (nibble >= grey1) out_byte |= 0x01;  //gray1
           else out_byte |= 0x00; //gray2
@@ -199,7 +199,7 @@ void GxEPD2_1160_GDEY116T91::writeImage_4G(const uint8_t bitmap[], uint8_t bpp, 
     }
   }
   _endTransfer();
-  _writeCommand(0x24);
+  _writeCommand(0x24); // write to RAM #1 (current)
   _startTransfer();
   for (uint16_t i = 0; i < h1; i++) // lines
   {
@@ -228,7 +228,7 @@ void GxEPD2_1160_GDEY116T91::writeImage_4G(const uint8_t bitmap[], uint8_t bpp, 
         {
           out_byte <<= 1;
           uint8_t nibble = in_byte & mask;
-          if (nibble == mask) out_byte |= 0x01;//white
+          if (nibble == mask) out_byte |= 0x01; //white
           else if (nibble == 0x00) out_byte |= 0x00;  //black
           else if (nibble >= grey1) out_byte |= 0x00;  //gray1
           else out_byte |= 0x01; //gray2
@@ -339,7 +339,7 @@ void GxEPD2_1160_GDEY116T91::writeImagePart_4G(const uint8_t bitmap[], uint8_t b
   if ((w1 <= 0) || (h1 <= 0)) return;
   if (!_init_4G_done) _Init_4G();
   _setPartialRamArea(x1, y1, w1, h1);
-  _writeCommand(0x26);
+  _writeCommand(0x26); // write to RAM #2 (previous)
   _startTransfer();
   for (uint16_t i = 0; i < h1; i++) // lines
   {
@@ -379,7 +379,7 @@ void GxEPD2_1160_GDEY116T91::writeImagePart_4G(const uint8_t bitmap[], uint8_t b
     }
   }
   _endTransfer();
-  _writeCommand(0x24);
+  _writeCommand(0x24); // write to RAM #1 (current)
   _startTransfer();
   for (uint16_t i = 0; i < h1; i++) // lines
   {
@@ -545,8 +545,8 @@ void GxEPD2_1160_GDEY116T91::hibernate()
   _PowerOff();
   if (_rst >= 0)
   {
-    _writeCommand(0x10); // deep sleep mode
-    _writeData(0x03);
+    _writeCommand(0x10); // Deep Sleep mode
+    _writeData(0x03);    // enter deep sleep
     _hibernating = true;
     _init_display_done = false;
     _init_4G_done = false;
@@ -555,35 +555,33 @@ void GxEPD2_1160_GDEY116T91::hibernate()
 
 void GxEPD2_1160_GDEY116T91::_setPartialRamArea(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
-  //Serial.print("_setPartialRamArea("); Serial.print(x); Serial.print(", "); Serial.print(y); Serial.print(", ");
-  //Serial.print(w); Serial.print(", "); Serial.print(h); Serial.println(")");
-  _writeCommand(0x11); // set ram entry mode
+  _writeCommand(0x11); // Data Entry mode setting
   _writeData(0x03);    // Y increment, X increment
-  _writeCommand(0x44);
-  _writeData(x % 256);
-  _writeData(x / 256);
-  _writeData((x + w - 1) % 256);
-  _writeData((x + w - 1) / 256);
-  _writeCommand(0x45);
-  _writeData(y % 256);
-  _writeData(y / 256);
-  _writeData((y + h - 1) % 256);
-  _writeData((y + h - 1) / 256);
-  _writeCommand(0x4e);
-  _writeData(x % 256);
-  _writeData(x / 256);
-  _writeCommand(0x4f);
-  _writeData(y % 256);
-  _writeData(y / 256);
+  _writeCommand(0x44); // Set start/end positions of the window addres in the X direction
+  _writeData(x % 256); // X-start low byte
+  _writeData(x / 256); // X-start high byte
+  _writeData((x + w - 1) % 256); // X-end low byte
+  _writeData((x + w - 1) / 256); // X-end high byte
+  _writeCommand(0x45); // Set start/end positions of the window addres in the Y direction
+  _writeData(y % 256); // Y-start low byte
+  _writeData(y / 256); // Y-start high byte
+  _writeData((y + h - 1) % 256); // Y-end low byte
+  _writeData((y + h - 1) / 256); // Y-end high byte
+  _writeCommand(0x4e); // Set RAM X address counter
+  _writeData(x % 256); // X low byte
+  _writeData(x / 256); // X high byte
+  _writeCommand(0x4f); // Set RAM Y address counter
+  _writeData(y % 256); // Y low byte
+  _writeData(y / 256); // Y high byte
 }
 
 void GxEPD2_1160_GDEY116T91::_PowerOn()
 {
   if (!_power_is_on)
   {
-    _writeCommand(0x22);
+    _writeCommand(0x22); // Display Update Control 2
     _writeData(0xc0);
-    _writeCommand(0x20);
+    _writeCommand(0x20); // Master Activation
     _waitWhileBusy("_PowerOn", power_on_time);
   }
   _power_is_on = true;
@@ -593,9 +591,9 @@ void GxEPD2_1160_GDEY116T91::_PowerOff()
 {
   if (_power_is_on)
   {
-    _writeCommand(0x22);
+    _writeCommand(0x22); // Display Update Control 2
     _writeData(0x83);
-    _writeCommand(0x20);
+    _writeCommand(0x20); // Master Activation
     _waitWhileBusy("_PowerOff", power_off_time);
   }
   _power_is_on = false;
@@ -605,30 +603,30 @@ void GxEPD2_1160_GDEY116T91::_PowerOff()
 void GxEPD2_1160_GDEY116T91::_InitDisplay()
 {
   if (_hibernating) _reset();
-  delay(10); // 10ms according to specs
-  _writeCommand(0x12);  //SWRESET
-  delay(10); // 10ms according to specs
-  _writeCommand(0x0C); //set soft start
+  delay(10);           // 10ms according to specs
+  _writeCommand(0x12); // SWRESET
+  delay(10);           // 10ms according to specs
+  _writeCommand(0x0C); // Booster Soft-start Control
   _writeData(0xAE);
   _writeData(0xC7);
   _writeData(0xC3);
   _writeData(0xC0);
-  _writeData(0x80);
+  _writeData(0x80);    // level 2
   _writeCommand(0x01); // Driver output control
   _writeData((HEIGHT - 1) % 256); // gates A0..A7
   _writeData((HEIGHT - 1) / 256); // gates A8, A9
-  _writeData(0x00); // non-interlaced scan mode (normal)
-  _writeCommand(0x3C); // Border setting
-  _writeData(0x01);
-  _writeCommand(0x18); // use the internal temperature sensor
-  _writeData(0x80);
+  _writeData(0x00);    // non-interlaced scan mode (normal)
+  _writeCommand(0x3C); // Border Waveform Control
+  _writeData(0x01);    // LUT1
+  _writeCommand(0x18); // Temperature Sensor Selection
+  _writeData(0x80);    // use the internal temperature sensor
   _setPartialRamArea(0, 0, WIDTH, HEIGHT);
   _init_display_done = true;
   _init_4G_done = false;
   if (_refresh_mode == grey_refresh)
   {
-    _writeScreenBuffer(0x24, 0xff); // set current
-    _writeScreenBuffer(0x26, 0xff); // set previous
+    _writeScreenBuffer(0x24, 0xff); // set RAM #1 (current)
+    _writeScreenBuffer(0x26, 0xff); // set RAM #2 (prev)
     _initial_write = false;
     _refresh_mode = forced_full_refresh;
   } else _refresh_mode = full_refresh;
@@ -676,41 +674,42 @@ void GxEPD2_1160_GDEY116T91::_Init_Full()
 void GxEPD2_1160_GDEY116T91::_Init_4G()
 {
   if (_hibernating) _reset();
-  delay(10); // 10ms according to specs
-  _writeCommand(0x12);  //SWRESET
-  delay(10); // 10ms according to specs
-  _writeCommand(0x0C); //set soft start
+  delay(10);               // 10ms according to specs
+  _writeCommand(0x12);     // SWRESET
+  delay(10);               // 10ms according to specs
+  _writeCommand(0x0C);     // Booster Soft-start Control
   _writeData(0xAE);
   _writeData(0xC7);
   _writeData(0xC3);
   _writeData(0xC0);
-  _writeData(0x80);
-  _writeCommand(0x01); // Driver output control
+  _writeData(0x80);        // level 2
+  _writeCommand(0x01);     // Driver output control
   _writeData((HEIGHT - 1) % 256); // gates A0..A7
   _writeData((HEIGHT - 1) / 256); // gates A8, A9
-  _writeData(0x00); // non-interlaced scan mode (normal)
-  _writeCommand(0x3C); // Border setting
-  _writeData(0x00); // LUT0 (white)
-  _writeCommand(0x18); // use the internal temperature sensor
-  _writeData(0x80);
+  _writeData(0x00);        // non-interlaced scan mode (normal)
+  _writeCommand(0x3C);     // Border Waveform Control
+  _writeData(0x00);        // LUT0 (white)
+  _writeCommand(0x18);     // Temperature Sensor Selection
+  _writeData(0x80);        // use the internal temperature sensor
   _setPartialRamArea(0, 0, WIDTH, HEIGHT);
-  _writeCommand(0x32);
+  _writeCommand(0x32);     // Write LUT register
   _writeDataPGM(lut_4G, 105);
-  _writeCommand(0x03); //VGH
+  _writeCommand(0x03);     // Gate Driving voltage control (VGH)
   _writeData(lut_4G[105]);
-  _writeCommand(0x04); //
-  _writeData(lut_4G[106]); //VSH1
-  _writeData(lut_4G[107]); //VSH2
-  _writeData(lut_4G[108]); //VSL
-  _writeCommand(0x2C);     //VCOM Voltage
-  _writeData(lut_4G[109]); //0x1C
-  _writeScreenBuffer(0x24, 0x00); // set current
-  _writeScreenBuffer(0x26, 0x00); // set previous
+  _writeCommand(0x04);     // Source Driving voltage control
+  _writeData(lut_4G[106]); // VSH1
+  _writeData(lut_4G[107]); // VSH2
+  _writeData(lut_4G[108]); // VSL
+  _writeCommand(0x2C);     // Write VCOM register
+  _writeData(lut_4G[109]);
+  _writeScreenBuffer(0x24, 0x00); // set RAM #1 (current)
+  _writeScreenBuffer(0x26, 0x00); // set RAM #2 (prev)
   _initial_write = false;
   _init_display_done = false;
   _init_4G_done = true;
   _refresh_mode = grey_refresh;
 }
+
 
 void GxEPD2_1160_GDEY116T91::_Init_Part()
 {
@@ -721,43 +720,43 @@ void GxEPD2_1160_GDEY116T91::_Init_Part()
 
 void GxEPD2_1160_GDEY116T91::_Update_Full()
 {
-  _writeCommand(0x21); // Display Update Controll
-  _writeData(0x40);    // bypass RED as 0
+  _writeCommand(0x21); // Display Update Control 1
+  _writeData(0x40);    // RAM #2 (prev): bypass RAM content as 0, RAM #1 (current): normal
   if (useFastFullUpdate)
   {
     _writeCommand(0x1A); // Write to temperature register
     _writeData(0x5A);
-    _writeCommand(0x22);
+    _writeCommand(0x22); // Display Update Control 2
     _writeData(0xd7);
   }
   else
   {
-    _writeCommand(0x22);
+    _writeCommand(0x22); // Display Update Control 2
     _writeData(0xf7);
   }
-  _writeCommand(0x20);
+  _writeCommand(0x20); // Master Activation
   _waitWhileBusy("_Update_Full", full_refresh_time);
   _power_is_on = false;
 }
 
 void GxEPD2_1160_GDEY116T91::_Update_4G()
 {
-  _writeCommand(0x21); // Display Update Controll
-  _writeData(0x00);    // RED normal (0x26)
-  _writeCommand(0x22);
+  _writeCommand(0x21); // Display Update Control 1
+  _writeData(0x00);    // RAM #2 (prev): normal, RAM #1 (current): normal
+  _writeCommand(0x22); // Display Update Control 2
   _writeData(0xc7);
-  _writeCommand(0x20);
+  _writeCommand(0x20); // Master Activation
   _waitWhileBusy("_Update_4G", grey_refresh_time);
   _power_is_on = false;
 }
 
 void GxEPD2_1160_GDEY116T91::_Update_Part()
 {
-  _writeCommand(0x21); // Display Update Controll
-  _writeData(0x00);    // RED normal
-  _writeCommand(0x22);
+  _writeCommand(0x21); // Display Update Control 1
+  _writeData(0x00);    // RAM #2 (prev): normal, RAM #1 (current): normal
+  _writeCommand(0x22); // Display Update Control 2
   _writeData(0xfc);
-  _writeCommand(0x20);
+  _writeCommand(0x20); // Master Activation
   _waitWhileBusy("_Update_Part", partial_refresh_time);
   _power_is_on = true;
 }
@@ -766,7 +765,7 @@ void GxEPD2_1160_GDEY116T91::drawGreyLevels()
 {
   if (!_init_4G_done) _Init_4G();
   _setPartialRamArea(0, 0, WIDTH, HEIGHT);
-  _writeCommand(0x24);
+  _writeCommand(0x24); // write to RAM #1 (current)
   for (uint32_t i = 0; i < uint32_t(WIDTH) * uint32_t(HEIGHT) / 32; i++)
   {
     _writeData(0x00);
@@ -783,7 +782,7 @@ void GxEPD2_1160_GDEY116T91::drawGreyLevels()
   {
     _writeData(0xFF);
   }
-  _writeCommand(0x26);
+  _writeCommand(0x26); // write to RAM #2 (previous)
   for (uint32_t i = 0; i < uint32_t(WIDTH) * uint32_t(HEIGHT) / 32; i++)
   {
     _writeData(0x00);
