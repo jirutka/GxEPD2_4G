@@ -1,7 +1,7 @@
 // Display Library for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
 // Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
 //
-// based on GxEPD2_1160_GDEY116T91
+// copy of GxEPD2_1160_GDEY116T91
 // Panel: GDEM102T91 : https://www.good-display.com/product/485.html
 // Controller : SSD1677 : https://v4.cecdn.yun300.cn/100001_1909185148/SSD1677.pdf
 //

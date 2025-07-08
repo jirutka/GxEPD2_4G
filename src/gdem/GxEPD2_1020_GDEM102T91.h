@@ -1,7 +1,7 @@
 // Display Library for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
 // Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
 //
-// based on GxEPD2_1160_GDEY116T91
+// copy of GxEPD2_1160_GDEY116T91
 // Panel: GDEM102T91 : https://www.good-display.com/product/485.html
 // Controller : SSD1677 : https://v4.cecdn.yun300.cn/100001_1909185148/SSD1677.pdf
 //
@@ -31,9 +31,9 @@ class GxEPD2_1020_GDEM102T91 : public GxEPD2_4G_EPD
     // FIXME: These times area pulled out of thin air!
     static const uint16_t power_on_time = 100; // ms, e.g. 81000us
     static const uint16_t power_off_time = 150; // ms, e.g. 140350us
-    static const uint16_t grey_refresh_time = 7000; // ms, e.g. 3943998us
-    static const uint16_t full_refresh_time = 5000; // ms, e.g. 1706000us
-    static const uint16_t partial_refresh_time = 700; // ms, e.g. 501000us
+    static const uint16_t grey_refresh_time = 6000; // ms, e.g. 3943998us
+    static const uint16_t full_refresh_time = 4000; // ms, e.g. 1706000us
+    static const uint16_t partial_refresh_time = 420; // ms, e.g. 501000us
     // constructor
     GxEPD2_1020_GDEM102T91(int16_t cs, int16_t dc, int16_t rst, int16_t busy);
     // methods (virtual)
