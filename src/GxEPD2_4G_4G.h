@@ -69,6 +69,9 @@
 #if __has_include("gdey/GxEPD2_750_GDEY075T7.h")
 #include "gdey/GxEPD2_750_GDEY075T7.h"
 #endif
+#if __has_include("gdem/GxEPD2_1020_GDEM102T91.h")
+#include "gdem/GxEPD2_1020_GDEM102T91.h"
+#endif
 #include "epd/GxEPD2_750_T7.h"
 
 template<typename GxEPD2_Type, const uint16_t page_height>
