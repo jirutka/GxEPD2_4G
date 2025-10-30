@@ -69,6 +69,9 @@
 #if __has_include("gdey/GxEPD2_750_GDEY075T7.h")
 #include "gdey/GxEPD2_750_GDEY075T7.h"
 #endif
+#if __has_include("gdey/GxEPD2_1160_GDEY116T91.h")
+#include "gdey/GxEPD2_1160_GDEY116T91.h"
+#endif
 #include "epd/GxEPD2_750_T7.h"
 
 template<typename GxEPD2_Type, const uint16_t page_height>
@@ -197,7 +200,7 @@ class GxEPD2_4G_4G_R : public GxEPD2_4G_GFX_BASE_CLASS
     // init method with additional parameters:
     // initial false for re-init after processor deep sleep wake up, if display power supply was kept
     // only relevant for b/w displays with fast partial update
-    // reset_duration = 10 is default; a value of 2 may help with "clever" reset circuit of newer boards from Waveshare 
+    // reset_duration = 10 is default; a value of 2 may help with "clever" reset circuit of newer boards from Waveshare
     // pulldown_rst_mode true for alternate RST handling to avoid feeding 5V through RST pin
     void init(uint32_t serial_diag_bitrate, bool initial, uint16_t reset_duration = 10, bool pulldown_rst_mode = false)
     {
