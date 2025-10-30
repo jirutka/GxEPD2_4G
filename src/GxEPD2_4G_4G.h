@@ -69,6 +69,9 @@
 #if __has_include("gdey/GxEPD2_750_GDEY075T7.h")
 #include "gdey/GxEPD2_750_GDEY075T7.h"
 #endif
+#if __has_include("gdem/GxEPD2_1020_GDEM102T91.h")
+#include "gdem/GxEPD2_1020_GDEM102T91.h"
+#endif
 #if __has_include("gdey/GxEPD2_1160_GDEY116T91.h")
 #include "gdey/GxEPD2_1160_GDEY116T91.h"
 #endif
